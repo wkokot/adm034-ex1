@@ -106,3 +106,20 @@ jobs:
           name: truck-files
           path: build/
           retention-days: 1
+
+  test_truck:
+    needs: build_truck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download truck artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: truck-files
+          path: build/
+
+      - name: Test truck
+        run: |
+          test -f build/truck.txt
+          grep "Cargo Bed" build/truck.txt
+          grep "truck" build/spare_parts_truck.txt
+          echo "Truck tests passed!"
