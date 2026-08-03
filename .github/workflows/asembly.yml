@@ -108,7 +108,6 @@ jobs:
           retention-days: 1
 
   test_truck:
-    needs: build_truck
     runs-on: ubuntu-latest
     steps:
       - name: Download truck artifact
