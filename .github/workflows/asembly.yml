@@ -1,8 +1,4 @@
-name: Test Pipeline
-
-# The guide's warm-up workflow. Small on purpose: it exists so your very
-# first commit produces a green run, a job graph and an artifact - the three
-# things the guide teaches you to find. Exercises bring their own workflows.
+name: Vehicle Assembly
 
 on:
   push:
@@ -10,31 +6,81 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_car:
     runs-on: ubuntu-latest
     steps:
-      - name: Say hello
-        run: echo "The pipeline is alive"
-
-      - name: Produce a file
+      - name: Assemble car
         run: |
           mkdir -p build
-          echo "built by run $GITHUB_RUN_NUMBER" > build/proof.txt
+          echo "Chassis" > build/car.txt
+          echo "Engine" >> build/car.txt
+          echo "Wheels" >> build/car.txt
+          echo "Body Frame and Doors" >> build/car.txt
+          echo "Lights and Indicators" >> build/car.txt
+          echo "Winter wheels for car" > build/spare_parts_car.txt
+          echo "Car Assembly Completed!"
+          cat build/car.txt
 
-      - name: Upload the proof
-        uses: actions/upload-artifact@v4
+      - name: Upload car artifact
+        uses: actions/upload-artifact@v6
         with:
-          name: proof
+          name: car-files
+          path: build/
+          retention-days: 1
+
+  build_motorbike:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assemble motorbike
+        run: |
+          mkdir -p build
+          echo "Frame" > build/motorbike.txt
+          echo "Engine" >> build/motorbike.txt
+          echo "Wheels" >> build/motorbike.txt
+          echo "Handlebars" >> build/motorbike.txt
+          echo "Seat" >> build/motorbike.txt
+          echo "Fuel Tank" >> build/motorbike.txt
+          echo "Winter wheels for motorbike" > build/spare_parts_motorbike.txt
+          echo "Motorbike Assembly Completed!"
+          cat build/motorbike.txt
+
+      - name: Upload motorbike artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: motorbike-files
+          path: build/
+          retention-days: 1
+
+  test_car:
+    needs: build_car
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download car artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: car-files
           path: build/
 
-  check:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Download the proof
-        uses: actions/download-artifact@v4
-        with:
-          name: proof
+      - name: Test car
+        run: |
+          test -f build/car.txt
+          grep "Engine" build/car.txt
+          grep "car" build/spare_parts_car.txt
+          echo "Car tests passed!"
 
-      - name: Read it
-        run: cat proof.txt
+  test_motorbike:
+    needs: build_motorbike
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download motorbike artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: motorbike-files
+          path: build/
+
+      - name: Test motorbike
+        run: |
+          test -f build/motorbike.txt
+          grep "Fuel Tank" build/motorbike.txt
+          grep "motorbike" build/spare_parts_motorbike.txt
+          echo "Motorbike tests passed!"
