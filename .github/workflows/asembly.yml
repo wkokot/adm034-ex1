@@ -90,6 +90,7 @@ jobs:
     steps:
       - name: Assemble truck
         run: |
+          sleep 16
           mkdir -p build
           echo "Chassis" > build/truck.txt
           echo "Engine" >> build/truck.txt
