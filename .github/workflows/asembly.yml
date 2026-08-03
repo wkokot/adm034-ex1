@@ -84,3 +84,25 @@ jobs:
           grep "Fuel Tank" build/motorbike.txt
           grep "motorbike" build/spare_parts_motorbike.txt
           echo "Motorbike tests passed!"
+
+  build_truck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assemble truck
+        run: |
+          mkdir -p build
+          echo "Chassis" > build/truck.txt
+          echo "Engine" >> build/truck.txt
+          echo "Wheels" >> build/truck.txt
+          echo "Cargo Bed" >> build/truck.txt
+          echo "Cabin" >> build/truck.txt
+          echo "Winter wheels for truck" > build/spare_parts_truck.txt
+          echo "Truck Assembly Completed!"
+          cat build/truck.txt
+
+      - name: Upload truck artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: truck-files
+          path: build/
+          retention-days: 1
