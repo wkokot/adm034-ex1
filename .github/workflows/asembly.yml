@@ -1,124 +1,40 @@
-# ADM-034 - CI/CD with GitHub Actions
-## Pre-Course Setup Guide (please complete BEFORE the first session)
+name: Test Pipeline
 
-The labs run entirely on **GitHub** - no VMs, no Docker, nothing to install on a server.
-But the account and tools below take 15-20 minutes to set up (email verification, 2FA),
-so please do this **the day before the training**, not on the morning of the session.
+# The guide's warm-up workflow. Small on purpose: it exists so your very
+# first commit produces a green run, a job graph and an artifact - the three
+# things the guide teaches you to find. Exercises bring their own workflows.
 
-There is a 4-step verification at the end. If all four checks pass, you are fully ready.
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
 
----
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say hello
+        run: echo "The pipeline is alive"
 
-## 1. Create a GitHub account (~5 min)
+      - name: Produce a file
+        run: |
+          mkdir -p build
+          echo "built by run $GITHUB_RUN_NUMBER" > build/proof.txt
 
-If you already have a personal GitHub account, you can reuse it - skip to step 2.
+      - name: Upload the proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: proof
+          path: build/
 
-1. Go to https://github.com and click **Sign up**.
-2. Use any email you can access (personal email is fine - a corporate account is not required).
-3. Choose a username and password, verify your email address.
-4. **Enable two-factor authentication (2FA)** when prompted - GitHub now requires it.
-   Use an authenticator app (Microsoft Authenticator, Google Authenticator) or SMS.
-   Do this now, not in class - it is the step that most often causes delays.
+  check:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download the proof
+        uses: actions/download-artifact@v4
+        with:
+          name: proof
 
-> A **free** GitHub account is all you need. There is nothing to buy.
-
----
-
-## 2. Install Git (~5 min)
-
-**Windows**
-- Download from https://git-scm.com/download/win and run the installer.
-- Accept the defaults (they are fine). Make sure **"Git from the command line"** is selected.
-- If your corporate laptop blocks the installer, request Git via your standard IT software-install process now - do not wait until the session.
-
-**macOS**
-- Git is usually pre-installed. Check by running `git --version` in Terminal.
-- If missing, it will prompt to install the Command Line Tools - accept.
-
-**Linux**
-- `sudo apt install git` (Debian/Ubuntu) or `sudo dnf install git` (Fedora/RHEL).
-
-Verify:
-```
-git --version
-```
-You should see a version number (2.x is fine).
-
----
-
-## 3. Install a code editor (~2 min)
-
-Any text editor works, but **Visual Studio Code** is recommended:
-- Download from https://code.visualstudio.com/ and install for your OS.
-
----
-
-## 4. Tell Git who you are (~1 min)
-
-In a terminal (Git Bash on Windows, Terminal on macOS/Linux), run - with your own name and email:
-```
-git config --global user.name "Your Name"
-git config --global user.email "your-github-email@example.com"
-```
-Use the **same email** you registered on GitHub with.
-
----
-
-## 5. Verification - please confirm ALL of these work before the session
-
-This 3-minute test proves your whole setup end to end. If it works, you are 100% ready.
-
-1. **Create a repository on GitHub.**
-   - On https://github.com click the **+** (top right) → **New repository**.
-   - Name it `actions-test`, set it to **Public**, tick **"Add a README file"**, click **Create repository**.
-
-   > Please use **Public** repositories for the labs. GitHub Actions minutes are **free and unlimited** on public repos; private repos have a monthly limit we do not want to hit.
-
-2. **Clone it to your machine.** On the repo page click the green **Code** button, copy the HTTPS URL, then:
-   ```
-   git clone https://github.com/<your-username>/actions-test.git
-   cd actions-test
-   ```
-   (When Git asks you to sign in, use the browser pop-up / your GitHub credentials.)
-
-3. **Add a tiny workflow and push it.** Create a file `.github/workflows/hello.yml` with this content:
-   ```yaml
-   name: hello
-   on: [push, workflow_dispatch]
-   jobs:
-     say-hello:
-       runs-on: ubuntu-latest
-       steps:
-         - run: echo "Hello from GitHub Actions"
-   ```
-   Then:
-   ```
-   git add .
-   git commit -m "add hello workflow"
-   git push
-   ```
-
-4. **Confirm the workflow ran.** Open your repo on github.com → **Actions** tab.
-   You should see a **"hello"** run with a green tick ✅.
-
-If you see the green tick, your environment is fully working - nothing else to do.
-
----
-
-## Verification checklist
-
-- [ ] GitHub account created, email verified, 2FA enabled
-- [ ] `git --version` shows a version number
-- [ ] Code editor (VS Code) installed
-- [ ] `git config` name + email set
-- [ ] Test repo created (Public), pushed a workflow, saw a green ✅ in the Actions tab
-
----
-
-## If something does not work
-
-- **`git push` asks for a password and rejects it** - GitHub no longer accepts your account password on the command line. When the browser pop-up appears, sign in there; or, if prompted for a token, create one under GitHub → Settings → Developer settings → Personal access tokens.
-- **Corporate laptop blocks Git install or github.com** - raise it with your IT / local Training Manager **before** the session so it is sorted in time.
-- **Actions tab shows nothing** - make sure the file path is exactly `.github/workflows/hello.yml` and that you pushed to the default branch.
-
-Bring your questions to the first session - but the four checks above should have you ready to start the labs immediately.
+      - name: Read it
+        run: cat proof.txt
