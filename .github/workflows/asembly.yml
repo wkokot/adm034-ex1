@@ -27,7 +27,9 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: car-files
-          path: build/
+          path: |
+            build/car.txt
+            build/spare_parts_car.txt
           retention-days: 1
 
   build_motorbike:
@@ -52,7 +54,9 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: motorbike-files
-          path: build/
+          path: |
+            build/motorbike.txt
+            build/spare_parts_motorbike.txt
           retention-days: 1
 
   test_car:
@@ -110,7 +114,9 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: truck-files
-          path: build/
+          path: |
+            build/truck.txt
+            build/spare_parts_truck.txt
           retention-days: 1
 
   test_truck:
