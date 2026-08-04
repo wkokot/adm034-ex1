@@ -135,3 +135,23 @@ jobs:
           grep "Cargo Bed" build/truck.txt
           grep "truck" build/spare_parts_truck.txt
           echo "Truck tests passed!"
+
+  test_all:
+    needs: [build_car, build_motorbike, build_truck]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: build/
+          merge-multiple: true
+
+      - name: Verify all vehicles
+        run: |
+          test -f build/car.txt
+          test -f build/motorbike.txt
+          test -f build/truck.txt
+          test ! -f build/invoice_car.txt
+          test ! -f build/invoice_motorbike.txt
+          test ! -f build/invoice_truck.txt
+          echo "All vehicles present, no invoices leaked!"
