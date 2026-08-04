@@ -114,7 +114,9 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: truck-files
-          path: build/
+          path: |
+            build/truck.txt
+            build/spare_parts_truck.txt
           retention-days: 1
 
   test_truck:
