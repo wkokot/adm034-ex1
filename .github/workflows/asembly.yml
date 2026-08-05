@@ -166,7 +166,7 @@ jobs:
         run: echo "Starting assembly of the vehicles"
 
   deploy_car:
-    needs: test_car
+    needs: test_all
     runs-on: ubuntu-latest
     steps:
       - name: Download car artifact
@@ -189,7 +189,7 @@ jobs:
           retention-days: 3
 
   deploy_motorbike:
-    needs: test_motorbike
+    needs: test_all
     runs-on: ubuntu-latest
     steps:
       - name: Download motorbike artifact
@@ -212,7 +212,7 @@ jobs:
           retention-days: 3
 
   deploy_truck:
-    needs: test_truck
+    needs: test_all
     runs-on: ubuntu-latest
     steps:
       - name: Download truck artifact
