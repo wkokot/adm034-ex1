@@ -179,7 +179,15 @@ jobs:
         run: |
           echo "Deploying car to production"
           cat build/car.txt
-    
+
+      - name: Upload failure artifact
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: car-files-failure
+          path: build/car.txt
+          retention-days: 3
+
   deploy_motorbike:
     needs: test_motorbike
     runs-on: ubuntu-latest
@@ -195,6 +203,14 @@ jobs:
           echo "Deploying motorbike to production"
           cat build/motorbike.txt
 
+      - name: Upload failure artifact
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: motorbike-files-failure
+          path: build/motorbike.txt
+          retention-days: 3
+
   deploy_truck:
     needs: test_truck
     runs-on: ubuntu-latest
@@ -209,3 +225,11 @@ jobs:
         run: |
           echo "Deploying truck to production"
           cat build/truck.txt
+
+      - name: Upload failure artifact
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: truck-files-failure
+          path: build/truck.txt
+          retention-days: 3
