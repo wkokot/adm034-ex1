@@ -164,4 +164,48 @@ jobs:
     steps:
       - name: Print start message
         run: echo "Starting assembly of the vehicles"
-  
+
+  deploy_car:
+    needs: test_car
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download car artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: car-files
+          path: build/
+
+      - name: Deploy car
+        run: |
+          echo "Deploying car to production"
+          cat build/car.txt
+    
+  deploy_motorbike:
+    needs: test_motorbike
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download motorbike artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: motorbike-files
+          path: build/
+
+      - name: Deploy motorbike
+        run: |
+          echo "Deploying motorbike to production"
+          cat build/motorbike.txt
+
+  deploy_truck:
+    needs: test_truck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download truck artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: truck-files
+          path: build/
+
+      - name: Deploy truck
+        run: |
+          echo "Deploying truck to production"
+          cat build/truck.txt
