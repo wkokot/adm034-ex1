@@ -178,6 +178,7 @@ jobs:
       - name: Deploy car
         run: |
           echo "Deploying car to production"
+          exit 1
           cat build/car.txt
 
       - name: Upload failure artifact
